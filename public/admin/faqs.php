@@ -1,0 +1,16 @@
+<?php
+require __DIR__ . '/../../app/admin/bootstrap.php';$error='';$id=(int)($_GET['edit']??0);$item=['id'=>0,'question'=>'','answer'=>'','sort_order'=>0,'is_active'=>1];
+if($id){$item=db_run('SELECT * FROM faqs WHERE id=?',[$id])->get_result()->fetch_assoc();if(!$item){http_response_code(404);exit('Không tìm thấy câu hỏi.');}}
+if($_SERVER['REQUEST_METHOD']==='POST') {
+ $pid=(int)($_POST['id']??0);
+ if(($_POST['action']??'')==='delete'){db_run('DELETE FROM faqs WHERE id=?',[$pid]);admin_redirect('faqs.php','Đã xóa câu hỏi.');}
+ $item=['id'=>$pid,'question'=>trim($_POST['question']??''),'answer'=>trim($_POST['answer']??''),'sort_order'=>(int)($_POST['sort_order']??0),'is_active'=>isset($_POST['is_active'])?1:0];
+ if(!$item['question']||!$item['answer']||mb_strlen($item['question'])>255||mb_strlen($item['answer'])>10000)$error='Nhập câu hỏi tối đa 255 ký tự và câu trả lời tối đa 10.000 ký tự.';
+ if(!$error){$p=[$item['question'],$item['answer'],$item['sort_order'],$item['is_active']];if($pid)db_run('UPDATE faqs SET question=?,answer=?,sort_order=?,is_active=? WHERE id=?',array_merge($p,[$pid]));else db_run('INSERT INTO faqs(question,answer,sort_order,is_active) VALUES (?,?,?,?)',$p);admin_redirect('faqs.php','Đã lưu câu hỏi.');}
+}
+$rows=$conn->query('SELECT * FROM faqs ORDER BY sort_order,id')->fetch_all(MYSQLI_ASSOC);admin_open('Câu hỏi thường gặp','Thêm, sửa, sắp xếp và bật/tắt nội dung FAQ.');
+?>
+<?php if($error): ?><div class="alert alert-danger"><?= e($error) ?></div><?php endif ?>
+<div class="table-responsive"><table class="table"><thead><tr><th>Câu hỏi</th><th>Thứ tự</th><th>Hiển thị</th><th>Thao tác</th></tr></thead><tbody><?php foreach($rows as $r): ?><tr><td><?= e($r['question']) ?></td><td><?= (int)$r['sort_order'] ?></td><td><?= $r['is_active']?'Bật':'Tắt' ?></td><td><div class="cms-actions"><a class="btn btn-sm btn-outline-dark" href="?edit=<?= $r['id'] ?>#edit-form">Sửa</a><form method="post" data-confirm="Xóa câu hỏi này?"><?= csrf_field() ?><input type="hidden" name="id" value="<?= $r['id'] ?>"><button class="btn btn-sm btn-outline-danger" name="action" value="delete">Xóa</button></form></div></td></tr><?php endforeach ?></tbody></table></div>
+<form method="post" class="cms-section cms-form" id="edit-form"><h3><?= $item['id']?'Sửa câu hỏi':'Thêm câu hỏi' ?></h3><?= csrf_field() ?><input type="hidden" name="id" value="<?= (int)$item['id'] ?>"><div class="mb-3"><label for="question" class="form-label">Câu hỏi</label><input class="form-control" id="question" name="question" required maxlength="255" value="<?= e($item['question']) ?>"></div><div class="mb-3"><label for="answer" class="form-label">Câu trả lời</label><textarea class="form-control" id="answer" name="answer" rows="5" required maxlength="10000"><?= e($item['answer']) ?></textarea></div><div class="row g-3"><div class="col-md-4"><label for="sort_order" class="form-label">Thứ tự</label><input type="number" class="form-control" id="sort_order" name="sort_order" value="<?= (int)$item['sort_order'] ?>"></div><div class="col-md-8 align-self-end"><label><input type="checkbox" name="is_active" <?= $item['is_active']?'checked':'' ?>> Hiển thị</label></div></div><div class="mt-4"><button class="btn btn-dark">Lưu câu hỏi</button> <a class="btn btn-outline-dark" href="faqs.php#edit-form">Thêm mới</a></div></form>
+<?php admin_close() ?>

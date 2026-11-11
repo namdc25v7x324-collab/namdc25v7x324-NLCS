@@ -1,0 +1,21 @@
+<?php
+require_once __DIR__ . '/../app/database.php';start_session();
+if(empty($_SESSION['user_id'])){header('Location: login.php?next=myinfo');exit;}
+$id=(int)$_SESSION['user_id'];$user=db_run('SELECT * FROM users WHERE id=?',[$id])->get_result()->fetch_assoc();
+if(!$user){$_SESSION=[];session_destroy();header('Location: login.php');exit;}
+$error='';$data=$user;
+if($_SERVER['REQUEST_METHOD']==='POST'){
+ verify_csrf();foreach(['fullname','email','phone','address'] as $f)$data[$f]=trim($_POST[$f]??'');
+ $password=$_POST['new_password']??'';$current=$_POST['current_password']??'';
+ if(!$data['fullname']||mb_strlen($data['fullname'])>100)$error='Họ tên bắt buộc và tối đa 100 ký tự.';
+ elseif($data['email']!==''&&(!filter_var($data['email'],FILTER_VALIDATE_EMAIL)||strlen($data['email'])>100))$error='Email không hợp lệ hoặc quá dài.';
+ elseif(strlen($data['phone'])>20||($data['phone']!==''&&!preg_match('/^[+0-9 ()-]{7,20}$/',$data['phone'])))$error='Số điện thoại không hợp lệ.';
+ elseif(mb_strlen($data['address'])>1000)$error='Địa chỉ tối đa 1.000 ký tự.';
+ elseif($password!==''&&(str_contains($current,"\0")||!password_verify($current,$user['password'])||!valid_new_password($password)||$password!==($_POST['confirm_password']??'')))$error='Đổi mật khẩu cần mật khẩu hiện tại đúng, mật khẩu mới 8–72 byte không chứa ký tự không hợp lệ và xác nhận trùng khớp.';
+ if(!$error){$conn->begin_transaction();try{db_run('UPDATE users SET fullname=?,email=?,phone=?,address=? WHERE id=?',[$data['fullname'],$data['email'],$data['phone'],$data['address'],$id]);if($password!=='')db_run('UPDATE users SET password=? WHERE id=?',[password_hash($password,PASSWORD_DEFAULT),$id]);$conn->commit();}catch(Throwable $ex){$conn->rollback();throw $ex;}
+ foreach(['fullname','phone','address'] as $f)$_SESSION[$f]=$data[$f];flash('Đã cập nhật thông tin tài khoản.');header('Location: myinfo.php');exit;}
+}
+$count=db_run('SELECT COUNT(*) count FROM orders WHERE user_id=?',[$id])->get_result()->fetch_assoc()['count'];$page_title='Thông tin của tôi · '.setting('site_name');include __DIR__ . '/../app/views/layout/header.php';
+?>
+<section class="page-heading"><div class="container"><p class="eyebrow">VALISTORE / TÀI KHOẢN</p><h1>Xin chào, <?= e($data['fullname']) ?>.</h1><p>Quản lý thông tin giao hàng và tài khoản của bạn.</p></div></section><div class="container account-layout"><div class="row g-4"><aside class="col-md-3"><nav class="info-nav"><a class="active" href="myinfo.php">Thông tin cá nhân</a><a href="orders.php">Đơn hàng của tôi (<?= (int)$count ?>)</a><a href="catalog.php">Tiếp tục mua sắm</a><a href="logout.php">Đăng xuất</a></nav></aside><div class="col-md-9"><?php show_flash();if($error): ?><div class="alert alert-danger"><?= e($error) ?></div><?php endif ?><form method="post" class="account-form"><?= csrf_field() ?><h2 class="mb-4">Hồ sơ của tôi</h2><p class="form-help">Tên đăng nhập: <strong><?= e($user['username']) ?></strong></p><div class="row g-3"><?php foreach(['fullname'=>'Họ và tên','email'=>'Email','phone'=>'Số điện thoại'] as $f=>$label): ?><div class="col-md-6"><label for="<?= $f ?>" class="form-label"><?= $label ?></label><input id="<?= $f ?>" name="<?= $f ?>" class="form-control" type="<?= $f==='email'?'email':($f==='phone'?'tel':'text') ?>" value="<?= e($data[$f]) ?>" maxlength="<?= $f==='phone'?20:100 ?>" <?= $f==='fullname'?'required':'' ?>></div><?php endforeach ?><div class="col-12"><label for="address" class="form-label">Địa chỉ giao hàng</label><textarea id="address" name="address" class="form-control" rows="3" maxlength="1000"><?= e($data['address']) ?></textarea></div></div><hr><h3 class="h5">Đổi mật khẩu</h3><p class="form-help">Để trống nếu bạn chưa cần đổi.</p><div class="row g-3"><?php foreach(['current_password'=>'Mật khẩu hiện tại','new_password'=>'Mật khẩu mới','confirm_password'=>'Xác nhận mật khẩu mới'] as $f=>$label): ?><div class="col-md-4"><label for="<?= $f ?>" class="form-label"><?= $label ?></label><input id="<?= $f ?>" name="<?= $f ?>" type="password" class="form-control" maxlength="72" autocomplete="<?= $f==='current_password'?'current-password':'new-password' ?>"></div><?php endforeach ?></div><button class="btn btn-dark mt-4">Lưu thông tin</button></form></div></div></div>
+<?php include __DIR__ . '/../app/views/layout/footer.php' ?>

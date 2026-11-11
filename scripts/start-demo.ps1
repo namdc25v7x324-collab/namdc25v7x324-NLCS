@@ -127,7 +127,7 @@ try {
     $config = $config -replace '(?m)^\s*Listen\s+[^\r\n]+', "Listen 127.0.0.1:$Port"
     $config = $config -replace '(?m)^\s*ServerName\s+[^\r\n]+', "ServerName 127.0.0.1:$Port"
     $config = $config -replace '(?m)^(\s*Include\s+[^\r\n]*httpd-ssl.conf[^\r\n]*)', '# $1'
-    $root = Apache-Value $project
+    $root = Apache-Value (Join-Path $project 'public')
     $config += "`r`nPidFile `"$(Apache-Value (Join-Path $state 'apache.pid'))`"`r`n"
     $config += "Alias /vonam `"$root`"`r`n<Directory `"$root`">`r`nAllowOverride All`r`nRequire local`r`n</Directory>`r`n"
     foreach ($key in @('HOST','NAME','USER','PASSWORD','PORT')) {

@@ -10,14 +10,15 @@ backups/
 /ban-giao/
 /tools/
 *.md
+!/README.md
 *.docx
 *.pdf
 *.zip
 
 # Giữ cấu hình bảo vệ thư mục upload, bỏ nội dung phát sinh
-/assets/uploads/*
-!/assets/uploads/.htaccess
-/assets/images/hero-travel.png
+/public/assets/uploads/*
+!/public/assets/uploads/.htaccess
+/public/assets/images/hero-travel.png
 
 # Cấu hình riêng và cache
 .env

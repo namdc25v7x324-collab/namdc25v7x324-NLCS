@@ -15,7 +15,7 @@ try {
     $tables = array_column($s->get_result()->fetch_all(MYSQLI_ASSOC), 'table_name');
     if (!$tables) {
         $db->close();
-        require __DIR__ . '/../setup.php';
+        require __DIR__ . '/../public/setup.php';
     } else {
         foreach (['users','products','orders','order_details'] as $table) {
             if (!in_array($table, $tables, true)) throw new RuntimeException('Database is not empty but lacks core tables. Select another VALI_DB_NAME; existing data was not reset.');

@@ -1,4 +1,8 @@
 Options -Indexes
-<FilesMatch "\.(sql|py|cjs|ps1|log)$">
-    Require all denied
-</FilesMatch>
+RewriteEngine On
+
+# Compatibility for an XAMPP checkout placed directly under htdocs.
+RewriteRule ^(?:app|database|scripts|config|includes|tools|artifacts|backups|baocao|ban-giao|\.git|\.demo)(?:/|$) - [F,NC]
+RewriteRule ^admin$ /vonam/admin/ [R=301,L]
+RewriteRule ^public(?:/|$) - [L,NC]
+RewriteRule ^(.*)$ /vonam/public/$1 [L]

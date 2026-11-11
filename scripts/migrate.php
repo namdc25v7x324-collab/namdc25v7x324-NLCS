@@ -1,40 +1,11 @@
 <?php
-if (PHP_SAPI!=='cli' && !defined('VALI_SETUP')) { http_response_code(403); exit('Migration chỉ chạy qua CLI.'); }
-// Additive migration: preserves existing products, users and orders.
-require __DIR__ . '/../config/database.php';
-$conn->query("CREATE TABLE IF NOT EXISTS settings (setting_key VARCHAR(100) PRIMARY KEY, setting_value TEXT NOT NULL) CHARACTER SET utf8mb4");
-$conn->query("CREATE TABLE IF NOT EXISTS banners (id INT AUTO_INCREMENT PRIMARY KEY, eyebrow VARCHAR(150), title VARCHAR(255) NOT NULL, body TEXT, image VARCHAR(500), button_text VARCHAR(100), button_url VARCHAR(500), sort_order INT DEFAULT 0, is_active TINYINT DEFAULT 1) CHARACTER SET utf8mb4");
-$conn->query("CREATE TABLE IF NOT EXISTS content_pages (id INT AUTO_INCREMENT PRIMARY KEY, slug VARCHAR(100) UNIQUE NOT NULL, title VARCHAR(200) NOT NULL, body MEDIUMTEXT NOT NULL, is_published TINYINT DEFAULT 1, sort_order INT DEFAULT 0, updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP) CHARACTER SET utf8mb4");
-$conn->query("CREATE TABLE IF NOT EXISTS faqs (id INT AUTO_INCREMENT PRIMARY KEY, question VARCHAR(255) NOT NULL, answer TEXT NOT NULL, sort_order INT DEFAULT 0, is_active TINYINT DEFAULT 1) CHARACTER SET utf8mb4");
-$conn->query("CREATE TABLE IF NOT EXISTS contact_messages (id INT AUTO_INCREMENT PRIMARY KEY, fullname VARCHAR(100) NOT NULL, email VARCHAR(150) NOT NULL, subject VARCHAR(200) NOT NULL, message TEXT NOT NULL, is_read TINYINT DEFAULT 0, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP) CHARACTER SET utf8mb4");
-$conn->query("CREATE TABLE IF NOT EXISTS subscribers (id INT AUTO_INCREMENT PRIMARY KEY, email VARCHAR(150) UNIQUE NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP) CHARACTER SET utf8mb4");
-foreach (['is_active' => 1, 'is_new' => 1, 'is_featured' => 0] as $column => $default) {
-    $exists = $conn->query("SHOW COLUMNS FROM products LIKE '$column'")->num_rows;
-    if (!$exists) { $conn->query("ALTER TABLE products ADD $column TINYINT NOT NULL DEFAULT $default"); if ($column==='is_featured') $conn->query("UPDATE products SET is_featured=1 WHERE id IN (1,2,6)"); }
+if (PHP_SAPI !== 'cli' && !defined('VALI_SETUP')) {
+    http_response_code(403);
+    exit('Migration chỉ chạy qua CLI.');
 }
-require_once __DIR__ . '/../includes/app.php';
-$stmt = $conn->prepare('INSERT IGNORE INTO settings (setting_key,setting_value) VALUES (?,?)');
-foreach (setting_defaults() as $key => $value) { $stmt->bind_param('ss',$key,$value); $stmt->execute(); }
-if (!$conn->query('SELECT id FROM banners LIMIT 1')->num_rows) {
-    $conn->query("INSERT INTO banners (eyebrow,title,body,image,button_text,button_url) VALUES ('HÀNH TRÌNH MỚI, HÀNH TRANG MỚI','Đi xa hơn.\nMang theo ít lo hơn.','Tìm chiếc vali dành cho những chuyến đi của bạn.','assets/images/hero-travel.webp','Khám phá bộ sưu tập','catalog.php')");
-}
-if (!$conn->query('SELECT id FROM content_pages LIMIT 1')->num_rows) {
-    $pages = [
-      ['about','Về ValiStore',"Hành trang cho mỗi chuyến đi\n\nValiStore mang đến một danh mục vali, balo và túi du lịch để bạn chọn hành trang phù hợp, từ chuyến công tác ngắn ngày đến hành trình khám phá dài hơn.\n\nBạn có thể xem kích thước, mô tả và số lượng còn hàng trước khi đặt. Đội ngũ cửa hàng tiếp nhận đơn và liên hệ xác nhận thông tin giao hàng.\n\nMua sắm theo cách của bạn\n\nTìm sản phẩm, thêm vào giỏ và gửi đơn trực tiếp trên website. Tạo tài khoản để quản lý thông tin và xem lại lịch sử mua hàng."],
-      ['shipping','Chính sách giao hàng',"Phạm vi giao hàng\n\nCửa hàng tiếp nhận đơn trong nước. Khu vực giao, phí vận chuyển và thời gian dự kiến sẽ được xác nhận khi cửa hàng liên hệ với bạn. Tổng tiền trên website là giá sản phẩm, chưa bao gồm phí vận chuyển.\n\nXác nhận và thanh toán\n\nSau khi đặt, đơn ở trạng thái chờ xử lý. Nhân viên xác nhận sản phẩm, địa chỉ và chi phí trước khi giao. Website chỉ mô phỏng thanh toán, không thu tiền thật. Kết quả mặc định thành công; ghi đúng “thất bại” hoặc “that bai” trong ghi chú để thử thất bại.\n\nKiểm tra khi nhận\n\nVui lòng đối chiếu sản phẩm, số lượng và tình trạng bao bì. Nếu có sai lệch, hãy liên hệ cửa hàng để được hướng dẫn."],
-      ['returns','Đổi trả & bảo hành',"Điều kiện tiếp nhận\n\nNếu sản phẩm giao sai, thiếu hoặc có lỗi, vui lòng liên hệ cửa hàng kèm mã đơn và hình ảnh tình trạng sản phẩm để được kiểm tra.\n\nQuy trình đổi trả\n\nCửa hàng xác nhận yêu cầu, hướng dẫn gửi lại sản phẩm và thống nhất phương án xử lý. Thời hạn, phí gửi và tình trạng hàng được tiếp nhận cần được xác nhận với nhân viên trước khi gửi.\n\nBảo hành\n\nĐiều kiện bảo hành phụ thuộc sản phẩm và nhà cung cấp. Vui lòng hỏi cửa hàng về điều kiện cụ thể trước khi mua."],
-      ['privacy','Chính sách bảo mật',"Thông tin được thu thập\n\nWebsite lưu thông tin tài khoản, thông tin liên hệ và giao hàng bạn cung cấp, cùng lịch sử đơn hàng.\n\nMục đích sử dụng\n\nThông tin được dùng để vận hành tài khoản, xác nhận đơn, giao hàng và phản hồi yêu cầu hỗ trợ. Đăng ký nhận tin lưu địa chỉ email bạn tự nguyện cung cấp.\n\nQuản lý thông tin\n\nBạn có thể cập nhật hồ sơ ở mục Tài khoản. Để yêu cầu kiểm tra hoặc xóa thông tin, hãy gửi yêu cầu qua trang Liên hệ.\n\nCookie phiên\n\nWebsite dùng cookie phiên để duy trì đăng nhập và giỏ hàng."],
-      ['terms','Điều khoản mua hàng',"Thông tin sản phẩm\n\nVui lòng đọc mô tả và kiểm tra thông tin trước khi đặt. Hình minh họa được ghi nhãn; hình ảnh thực tế sẽ được cập nhật theo từng sản phẩm.\n\nĐặt hàng\n\nGửi đơn là yêu cầu mua hàng. Cửa hàng kiểm tra tồn kho, liên hệ xác nhận giá, phí vận chuyển và thời gian giao trước khi thực hiện.\n\nTài khoản\n\nBạn chịu trách nhiệm giữ kín mật khẩu và cung cấp thông tin liên hệ chính xác."]
-    ];
-    $stmt=$conn->prepare('INSERT INTO content_pages (slug,title,body,sort_order) VALUES (?,?,?,?)');
-    foreach($pages as $i=>$p) { $stmt->bind_param('sssi',$p[0],$p[1],$p[2],$i);$stmt->execute(); }
-}
-if (!$conn->query('SELECT id FROM faqs LIMIT 1')->num_rows) {
-    $items=[['Chọn vali 20, 24 hay 28 inch như thế nào?','Vali 20 inch phù hợp chuyến đi ngắn; 24–28 inch phù hợp hành lý nhiều hơn. Quy định xách tay tùy hãng bay, hãy kiểm tra kích thước và trọng lượng trước chuyến đi.'],['Tôi có cần tài khoản để đặt hàng không?','Bạn có thể đặt với tư cách khách. Đăng ký tài khoản giúp điền sẵn thông tin và xem lịch sử đơn hàng.'],['Tôi thanh toán bằng cách nào?','Website dùng thanh toán giả lập, không thu tiền thật. Để trống ghi chú để đơn thành công; ghi đúng “thất bại” hoặc “that bai” để thử đơn thất bại.'],['Tôi có thể đổi thông tin sau khi đặt không?','Hãy gửi yêu cầu qua trang Liên hệ kèm mã đơn để cửa hàng kiểm tra trước khi giao.'],['Làm sao theo dõi đơn hàng?','Đăng nhập và chọn Đơn hàng của tôi. Đơn đặt khi chưa đăng nhập cần liên hệ cửa hàng để tra cứu.']];
-    $stmt=$conn->prepare('INSERT INTO faqs(question,answer,sort_order) VALUES (?,?,?)');
-    foreach($items as $i=>$p) { $stmt->bind_param('ssi',$p[0],$p[1],$i);$stmt->execute(); }
-}
-echo "CMS migration complete. Existing data preserved.\n";
-require __DIR__.'/migrate_20261007.php';
 
-require __DIR__.'/migrate_payment_demo.php';
+require_once __DIR__ . '/../app/database.php';
+
+require __DIR__ . '/../database/migrations/001_cms.php';
+require __DIR__ . '/../database/migrations/002_order_snapshots.php';
+require __DIR__ . '/../database/migrations/003_payment_demo.php';

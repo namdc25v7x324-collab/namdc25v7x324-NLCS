@@ -1,7 +1,7 @@
 <?php
 if (PHP_SAPI !== 'cli') { http_response_code(403);exit; }
-require __DIR__.'/../config/database.php';
-$rows=json_decode(file_get_contents(__DIR__.'/../assets/images/product-photo-sources.json'),true,512,JSON_THROW_ON_ERROR);
+require __DIR__.'/../app/database.php';
+$rows=json_decode(file_get_contents(__DIR__.'/../public/assets/images/product-photo-sources.json'),true,512,JSON_THROW_ON_ERROR);
 $conn->begin_transaction();
 try {
  foreach($rows as $row) {

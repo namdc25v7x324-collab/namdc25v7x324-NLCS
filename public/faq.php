@@ -1,0 +1,5 @@
+<?php require_once __DIR__ . '/../app/database.php';$page_title='Câu hỏi thường gặp · '.setting('site_name');include __DIR__ . '/../app/views/layout/header.php'; ?>
+<section class="page-heading"><div class="container"><p class="eyebrow">VALISTORE / HỖ TRỢ</p><h1><?= e(setting('faq_title')) ?></h1><p><?= e(setting('faq_intro')) ?></p></div></section><div class="container"><div class="faq-list">
+<?php $rows=$conn->query('SELECT * FROM faqs WHERE is_active=1 ORDER BY sort_order,id')->fetch_all(MYSQLI_ASSOC);foreach($rows as $r): ?><details><summary><?= e($r['question']) ?></summary><p><?= e($r['answer']) ?></p></details><?php endforeach;if(!$rows): ?><p>Chưa có câu hỏi được đăng. Hãy gửi yêu cầu cho cửa hàng.</p><?php endif ?>
+<div class="mt-5"><h2>Vẫn còn điều bạn muốn hỏi?</h2><p class="text-muted">Gửi lời nhắn, cửa hàng sẽ tiếp nhận yêu cầu của bạn.</p><a href="contact.php" class="btn btn-dark">Liên hệ với chúng tôi <i aria-hidden="true" class="bi bi-arrow-up-right ms-3"></i></a></div></div></div>
+<?php include __DIR__ . '/../app/views/layout/footer.php' ?>
