@@ -1,0 +1,91 @@
+[
+  {
+    "id": 1,
+    "model": "Travelking 8088 20 inch",
+    "page": "https://nancyvali.com/products/vali-nhua-travelking-8088-20inch",
+    "url": "https://product.hstatic.net/200000877355/product/8088_3_5b4307d3eb1f4742821b529254ed2ed5_master.jpg",
+    "local": "assets/images/demo-reference-1.jpg",
+    "download_url": "https://product.hstatic.net/200000877355/product/8088_3_5b4307d3eb1f4742821b529254ed2ed5_master.jpg",
+    "mime": "image/jpeg",
+    "bytes": 41693,
+    "purpose": "Ảnh chụp thật tham khảo cho sản phẩm demo; chưa xác nhận đúng mã/màu/kích thước của sản phẩm trong database."
+  },
+  {
+    "id": 2,
+    "model": "Samsonite Freeform 24 inch",
+    "page": "https://altmanluggage.com/products/samsonite-freeform-24-spinner",
+    "url": "https://altmanluggage.com/cdn/shop/products/782564744_24Spin_Front34.jpg?v=1655135416",
+    "local": "assets/images/demo-reference-2.jpg",
+    "download_url": "https://altmanluggage.com/cdn/shop/products/782564744_24Spin_Front34.jpg?v=1655135416",
+    "mime": "image/jpeg",
+    "bytes": 206951,
+    "purpose": "Ảnh chụp thật tham khảo cho sản phẩm demo; chưa xác nhận đúng mã/màu/kích thước của sản phẩm trong database."
+  },
+  {
+    "id": 3,
+    "model": "RIMOWA Essential Check-in L",
+    "page": "https://www.lyst.com/bags/rimowa-essential-check-in-l-suitcase-83/",
+    "url": "https://cdna.lystit.com/520/650/n/photos/rimowa/31f2a0ee/rimowa-verde_gloss-Essential-Check-in-L-Suitcase.jpeg",
+    "local": "assets/images/demo-reference-3.jpg",
+    "download_url": "https://cdna.lystit.com/520/650/n/photos/rimowa/31f2a0ee/rimowa-verde_gloss-Essential-Check-in-L-Suitcase.jpeg",
+    "mime": "image/jpeg",
+    "bytes": 20647,
+    "purpose": "Ảnh chụp thật tham khảo cho sản phẩm demo; chưa xác nhận đúng mã/màu/kích thước của sản phẩm trong database.",
+    "original_brand_page": "https://www.rimowa.com/ad/en/luggage/colour/green/check-in-l/83273961.html"
+  },
+  {
+    "id": 4,
+    "model": "Sakos Vivian softside luggage",
+    "page": "https://nancyvali.com/products/vali-keo-vai-sakos-vivian-sieu-ben-hang-viet-nam-thuong-hieu-my-size-20-24-28inch",
+    "url": "https://product.hstatic.net/200000877355/product/vi_2_b233c38b50314d6f9aeed2541b4c13e4_master.png",
+    "local": "assets/images/demo-reference-4.png",
+    "download_url": "https://product.hstatic.net/200000877355/product/vi_2_b233c38b50314d6f9aeed2541b4c13e4_master.png",
+    "mime": "image/png",
+    "bytes": 126684,
+    "purpose": "Ảnh chụp thật tham khảo cho sản phẩm demo; chưa xác nhận đúng mã/màu/kích thước của sản phẩm trong database."
+  },
+  {
+    "id": 5,
+    "model": "Heys Xero Elite 2.0 26 inch",
+    "page": "https://ca.heys.com/products/xero-elite-2-0-26-inch-luggage-worlds-lightest-luggage",
+    "url": "https://cdn.shopify.com/s/files/1/0251/3649/products/Xero_Elite_2.0_26_Inch_Luggage_Front_navy.jpg?v=1708628796&width=1000",
+    "local": "assets/images/demo-reference-5.jpg",
+    "download_url": "https://cdn.shopify.com/s/files/1/0251/3649/products/Xero_Elite_2.0_26_Inch_Luggage_Front_navy.jpg?v=1708628796&width=1000",
+    "mime": "image/jpeg",
+    "bytes": 39931,
+    "purpose": "Ảnh chụp thật tham khảo cho sản phẩm demo; chưa xác nhận đúng mã/màu/kích thước của sản phẩm trong database."
+  },
+  {
+    "id": 6,
+    "model": "Forclaz Travel 500 40L",
+    "page": "https://www.decathlon.ca/en/p/8787845/hiking-backpack-40-l-travel-500",
+    "url": "https://contents.mediadecathlon.com/p2393226/k%245234ae71b3a2a4e5076897a0bdb41098/picture.jpg?f=800x800",
+    "local": "assets/images/demo-reference-6.jpg",
+    "download_url": "https://contents.mediadecathlon.com/p2393226/k%245234ae71b3a2a4e5076897a0bdb41098/picture.jpg?f=800x800",
+    "mime": "image/jpeg",
+    "bytes": 22643,
+    "purpose": "Ảnh chụp thật tham khảo cho sản phẩm demo; chưa xác nhận đúng mã/màu/kích thước của sản phẩm trong database."
+  },
+  {
+    "id": 7,
+    "model": "Forclaz/Simond Trek 100 Easyfit 50L",
+    "page": "https://www.decathlon.vn/vi-VN/p/balo-trekking-50l-trek-100-easyfit-cho-nam-%C3%84%E2%80%98en-forclaz-8559690.html",
+    "url": "https://contents.mediadecathlon.com/p2951803/k$69d8290c685a3ee7d84c75919d41245c/balo-trekking-50l-trek-100-easyfit-cho-nam-%C4%91en-simond-8559690.jpg?f=800x800",
+    "local": "assets/images/demo-reference-7.jpg",
+    "download_url": "https://contents.mediadecathlon.com/p2951803/k$69d8290c685a3ee7d84c75919d41245c/balo-trekking-50l-trek-100-easyfit-cho-nam-%C4%91en-simond-8559690.jpg?f=800x800",
+    "mime": "image/jpeg",
+    "bytes": 44471,
+    "purpose": "Ảnh chụp thật tham khảo cho sản phẩm demo; chưa xác nhận đúng mã/màu/kích thước của sản phẩm trong database."
+  },
+  {
+    "id": 8,
+    "model": "Kipsta Essential 35L",
+    "page": "https://www.decathlon.co.id/en-ID/p/bag-essential-35l-black-kipsta-8580093.html",
+    "url": "https://contents.mediadecathlon.com/p2161272/k%245ade70c6f064a3c3cd0079848fcd450a/sports-bag-essential-35-l-black-decathlon-8580093.jpg?f=800x800",
+    "local": "assets/images/demo-reference-8.jpg",
+    "download_url": "https://contents.mediadecathlon.com/p2161272/k%245ade70c6f064a3c3cd0079848fcd450a/sports-bag-essential-35-l-black-decathlon-8580093.jpg?f=800x800",
+    "mime": "image/jpeg",
+    "bytes": 34176,
+    "purpose": "Ảnh chụp thật tham khảo cho sản phẩm demo; chưa xác nhận đúng mã/màu/kích thước của sản phẩm trong database."
+  }
+]
